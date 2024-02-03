@@ -6,18 +6,17 @@ import be.tarsos.dsp.io.android.AudioDispatcherFactory
 import be.tarsos.dsp.pitch.PitchDetectionHandler
 import be.tarsos.dsp.pitch.PitchDetectionResult
 import be.tarsos.dsp.pitch.PitchProcessor
+import io.reactivex.rxjava3.core.BackpressureStrategy
+import io.reactivex.rxjava3.core.Flowable
 import io.reactivex.rxjava3.core.Observable
-import io.reactivex.rxjava3.schedulers.Schedulers
 import io.reactivex.rxjava3.subjects.BehaviorSubject
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import io.reactivex.rxjava3.subjects.PublishSubject
 
 class TunerViewModel : ViewModel() {
 
     private var isTuning = false
     private var currentPitch = 0f
-    private val stateSubject = BehaviorSubject.createDefault(TunerState(isTuning, currentPitch))
+    private val stateSubject: BehaviorSubject<TunerState> = BehaviorSubject.create()
 
 
     fun processIntent(intent: TunerIntent) {
@@ -70,7 +69,7 @@ class TunerViewModel : ViewModel() {
         updateState()
     }
 
-    fun observeState(): Observable<TunerState> {
-        return stateSubject.hide()
+    fun observeState(): Flowable<TunerState> {
+        return stateSubject.toFlowable(BackpressureStrategy.DROP)
     }
 }

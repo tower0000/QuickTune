@@ -15,6 +15,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import com.tower0000.quicktune.ui.screens.TunerScreen
+import com.tower0000.quicktune.ui.theme.GreyBackground
+import com.tower0000.quicktune.ui.theme.PurpleGrey80
 import com.tower0000.quicktune.ui.theme.QuickTuneTheme
 import com.tower0000.quicktune.ui.viewmodel.TunerIntent
 import com.tower0000.quicktune.ui.viewmodel.TunerState
@@ -29,26 +32,23 @@ class TunerActivity : ComponentActivity() {
     private lateinit var stateSubscription: Disposable
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        checkPermissions()
+        viewModel.processIntent(TunerIntent.StartTunerIntent)
+
         setContent {
             QuickTuneTheme {
                 // A surface container using the 'background' color from the theme
                 Surface(
                     modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.background
+                    color = GreyBackground
                 ) {
-                    Greeting("Android")
+                    TunerScreen(viewModel)
                 }
             }
         }
-        checkPermissions()
-        viewModel.processIntent(TunerIntent.StartTunerIntent)
 
-        stateSubscription = viewModel.observeState()
-            .subscribeOn(Schedulers.newThread())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe { state ->
-                processState(state)
-            }
+
     }
 
 
@@ -63,29 +63,5 @@ class TunerActivity : ComponentActivity() {
                 RECORD_AUDIO_PERMISSION
             )
         }
-    }
-}
-
-private fun processState(state: TunerState){
-    if (state.isTuning) {
-        val pitch = state.currentPitch
-    }
-}
-
-
-
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    QuickTuneTheme {
-        Greeting("Android")
     }
 }
