@@ -16,11 +16,17 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.tower0000.quicktune.ui.theme.QuickTuneTheme
+import com.tower0000.quicktune.ui.viewmodel.TunerIntent
+import com.tower0000.quicktune.ui.viewmodel.TunerState
 import com.tower0000.quicktune.ui.viewmodel.TunerViewModel
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.disposables.Disposable
+import io.reactivex.rxjava3.schedulers.Schedulers
 import kotlinx.coroutines.flow.flowOf
 
 class TunerActivity : ComponentActivity() {
     private val viewModel by viewModels<TunerViewModel>()
+    private lateinit var stateSubscription: Disposable
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -34,54 +40,35 @@ class TunerActivity : ComponentActivity() {
                 }
             }
         }
+        checkPermissions()
+        viewModel.processIntent(TunerIntent.StartTunerIntent)
 
-//        val flow = flowOf(viewModel.state)
-//
-//        val flowable = flow
-//            .asFlow() // Convert Flow to RxJava Flowable
-//            .rxFlowable() // Use rxFlowable extension function
-//
-//        compositeDisposable.add(
-//            flowable.subscribeBy(
-//                onNext = { value ->
-//                    // Handle onNext
-//                },
-//                onError = { error ->
-//                    // Handle onError
-//                },
-//                onComplete = {
-//                    // Handle onComplete
-//                }
-//            )
-//        )
-//
-//
-//        viewModel.state.collect { state ->
-//            updateUI(state)
-//        }
-//
-//
-//        val RECORD_AUDIO_PERMISSION = 123
-//
-//        if (ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO)
-//            != PackageManager.PERMISSION_GRANTED) {
-//            ActivityCompat.requestPermissions(
-//                this,
-//                arrayOf(Manifest.permission.RECORD_AUDIO),
-//                RECORD_AUDIO_PERMISSION
-//            )
-//            val tuner = Tuner()
-//            tuner.startTuner()
-//
-//        } else {
-//            val tuner = Tuner()
-//            tuner.startTuner()
-//        }
-//    }
-//
-//    override fun onDestroy() {
-//        super.onDestroy()
-//        compositeDisposable.clear()
+        stateSubscription = viewModel.observeState()
+            .subscribeOn(Schedulers.newThread())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe { state ->
+                processState(state)
+            }
+    }
+
+
+    private fun checkPermissions() {
+        val RECORD_AUDIO_PERMISSION = 123
+
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO)
+            != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(
+                this,
+                arrayOf(Manifest.permission.RECORD_AUDIO),
+                RECORD_AUDIO_PERMISSION
+            )
+        }
+    }
+}
+
+private fun processState(state: TunerState){
+    if (state.isTuning) {
+        val pitch = state.currentPitch
     }
 }
 

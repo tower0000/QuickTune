@@ -73,9 +73,10 @@ dependencies {
 
     //Rx Java
     implementation("io.reactivex.rxjava3:rxjava:3.1.5")
+    implementation("io.reactivex.rxjava3:rxandroid:3.0.2")
 
     //Dagger 2
     implementation("com.google.dagger:dagger:2.50")
-    kapt ("com.google.dagger:dagger-compiler:2.50")
+    kapt("com.google.dagger:dagger-compiler:2.50")
 }
 
