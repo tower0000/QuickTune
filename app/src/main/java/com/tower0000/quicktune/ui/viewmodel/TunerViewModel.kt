@@ -6,6 +6,8 @@ import be.tarsos.dsp.io.android.AudioDispatcherFactory
 import be.tarsos.dsp.pitch.PitchDetectionHandler
 import be.tarsos.dsp.pitch.PitchDetectionResult
 import be.tarsos.dsp.pitch.PitchProcessor
+import com.tower0000.quicktune.domain.service.TuningService
+import com.tower0000.quicktune.domain.service.Tunings
 import io.reactivex.rxjava3.core.BackpressureStrategy
 import io.reactivex.rxjava3.core.Flowable
 import io.reactivex.rxjava3.core.Observable
@@ -16,6 +18,8 @@ class TunerViewModel : ViewModel() {
 
     private var isTuning = false
     private var currentPitch = 0f
+    private var nearestNote = "--"
+    private var pitchDiff = 0f
     private val stateSubject: BehaviorSubject<TunerState> = BehaviorSubject.create()
 
 
@@ -27,7 +31,7 @@ class TunerViewModel : ViewModel() {
     }
 
     private fun updateState() {
-        val newState = TunerState(isTuning, currentPitch)
+        val newState = TunerState(isTuning, currentPitch, nearestNote, pitchDiff)
         stateSubject.onNext(newState)
     }
 
@@ -36,6 +40,10 @@ class TunerViewModel : ViewModel() {
 
     private fun processPitch(result: PitchDetectionResult) {
         currentPitch = result.pitch
+        TuningService.processPitch(currentPitch, Tunings.STANDARD_TUNING) { note, diff ->
+            nearestNote = note.name
+            pitchDiff = diff
+        }
         updateState()
     }
 

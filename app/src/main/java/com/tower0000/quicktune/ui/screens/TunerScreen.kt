@@ -13,7 +13,7 @@ import io.reactivex.rxjava3.schedulers.Schedulers
 @Composable
 fun TunerScreen(viewModel: TunerViewModel) {
 
-    val state = remember { mutableStateOf(TunerState(false, 0f)) }
+    val state = remember { mutableStateOf(TunerState(false, 0f, "--", 0f)) }
 
     DisposableEffect(viewModel) {
         val disposable = viewModel.observeState()

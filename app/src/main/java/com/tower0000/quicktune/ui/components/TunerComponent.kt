@@ -42,7 +42,6 @@ fun TunerComponent(state: TunerState) {
                 .size(400.dp)
                 .background(GreyBackground)
         ) {
-            Spacer(modifier = Modifier.height(50.dp)) // Вертикальный отступ внутри внешнего Box
 
             Canvas(
                 modifier = Modifier
@@ -63,23 +62,23 @@ fun TunerComponent(state: TunerState) {
 
                 val strokeWidth = 12.dp.toPx()
 
-                // Рисуем дугу
-                drawArc(
-                    color = Pink,
-                    startAngle = 215f,
-                    sweepAngle = 110f,
-                    useCenter = false,
-                    size = size,
-                    style = Stroke(width = strokeWidth)
-                )
-
-                // Рисуем палку
-                drawLine(
-                    color = Color.White,
-                    start = center,
-                    end = calculateIndicatorEndPoint(center, radius, indicatorAngle),
-                    strokeWidth = 4.dp.toPx()
-                )
+//                // Рисуем дугу
+//                drawArc(
+//                    color = Pink,
+//                    startAngle = 215f,
+//                    sweepAngle = 110f,
+//                    useCenter = false,
+//                    size = size,
+//                    style = Stroke(width = strokeWidth)
+//                )
+//
+//                // Рисуем палку
+//                drawLine(
+//                    color = Color.White,
+//                    start = center,
+//                    end = calculateIndicatorEndPoint(center, radius, indicatorAngle),
+//                    strokeWidth = 4.dp.toPx()
+//                )
             }
         }
     }
@@ -90,8 +89,9 @@ fun TunerComponent(state: TunerState) {
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text(text = "Pitch: ${state.currentPitch}")
-
+        Text(text = "Pitch: ${state.currentPitch}", color = Color.White)
+        Text(text = "Nearest note: ${state.nearestNote}", color = Color.White)
+        Text(text = "Pitch Diff: ${state.pitchDiff}", color = Color.White)
     }
 }
 
