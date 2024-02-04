@@ -18,10 +18,10 @@ class TuningService {
             )
 
             val nearestNote =
-                allNotes.minByOrNull { abs((it.botHzLimit + it.upHzLimit) / 2 - currentPitch) }
+                allNotes.minByOrNull { abs(it.hzValue - currentPitch) }
 
-            // If pitchDiff >0 -> note is bellow tune. if pitchDiff <0 -> note is higher than needed
-            val pitchDiff = (nearestNote!!.botHzLimit + nearestNote.upHzLimit) / 2 - currentPitch
+            // If pitchDiff <0 -> note is bellow tune. if pitchDiff >0 -> note is higher than needed
+            val pitchDiff = (currentPitch - nearestNote!!.hzValue)
 
             onResult(nearestNote, pitchDiff)
         }
