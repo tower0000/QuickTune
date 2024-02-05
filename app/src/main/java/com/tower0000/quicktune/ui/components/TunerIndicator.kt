@@ -2,6 +2,7 @@ package com.tower0000.quicktune.ui.components
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -17,10 +18,13 @@ import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Paint
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.DrawScope
+import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.text.TextMeasurer
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.drawText
@@ -106,7 +110,7 @@ fun TunerIndicate(
                 )
                 pitchMarker(startOffset, markerOffset, SolidColor(Color.White), 4.dp.toPx())
                 pitchText(
-                    pitch = (pitchDiffIndicator - 120)/4,
+                    pitch = (pitchDiffIndicator - 120) / 4,
                     angle = angle,
                     textMeasurer = textMeasurer,
                     textColor = textColor
@@ -122,57 +126,40 @@ fun TunerIndicate(
                 pitchMarker(startOffset, endOffset, SolidColor(Color.DarkGray), 1.dp.toPx())
             }
         }
-
         pitchIndicator(pitchAngle = 180 - pitchDiffFixed * 4)
-    })
 
-    Column(
-        modifier = modifier
-            .fillMaxSize()
-            .padding(16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
 
-    ) {
-        Spacer(modifier = Modifier.requiredSize(95.dp))
-        Text(
+        drawText(topLeft = Offset(x = 335f, y = 270f),
+            textMeasurer = textMeasurer,
             text = "${String.format("%.0f", state.currentPitch)}Hz",
-            color = textColor,
-            fontSize = 30.sp,
-            fontStyle = FontStyle.Italic
+            style = TextStyle(
+                color = textColor,
+                fontSize = 30.sp,
+                fontStyle = FontStyle.Italic
+            )
         )
-    }
-
-    Column(
-        modifier = modifier
-            .fillMaxSize()
-            .padding(16.dp),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-
-    ) {
-        Spacer(modifier = Modifier.requiredSize(145.dp))
-
-        Text(
+        drawText(topLeft = Offset(x = 363f, y = 500f),
+            textMeasurer = textMeasurer,
             text = state.nearestNote,
-            color = textColor,
-            fontSize = 55.sp
+            style = TextStyle(
+                color = textColor,
+                fontSize = 55.sp,
+            )
         )
-
-        Text(
+        drawText(topLeft = Offset(x = 385f, y = 680f),
+            textMeasurer = textMeasurer,
             text = if (state.pitchDiff > 0) {
                 "+${String.format("%.0f", state.pitchDiff)}"
             } else {
                 String.format("%.0f", state.pitchDiff)
             },
-            color = textColor,
-            modifier = Modifier.fillMaxWidth(),
-            textAlign = TextAlign.Center,
-            fontSize = 20.sp,
-
+            style = TextStyle(
+                color = textColor,
+                fontSize = 20.sp,
             )
+        )
 
-
-    }
+    })
 }
 
 private fun DrawScope.pitchMarker(
