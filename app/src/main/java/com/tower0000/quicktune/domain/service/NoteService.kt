@@ -6,7 +6,7 @@ class NoteService {
     companion object {
         private val noteList: List<Note> = listOf(
             Note("E2", 82.41f),
-            Note("A2", 110.0f),
+            Note("A3", 110.0f),
             Note("D3", 146.83f),
             Note("G3", 196.00f),
             Note("B3", 246.94f),

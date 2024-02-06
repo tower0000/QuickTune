@@ -10,7 +10,7 @@ class Tunings {
             NoteService.getNote("B3")!!,
             NoteService.getNote("G3")!!,
             NoteService.getNote("D3")!!,
-            NoteService.getNote("A2")!!,
+            NoteService.getNote("A3")!!,
             NoteService.getNote("E2")!!
         )
     }
