@@ -1,15 +1,24 @@
 package com.tower0000.quicktune.ui.screens
 
+import android.content.Context
+import android.os.Build
+import android.util.DisplayMetrics
+import android.view.Display
+import android.view.WindowManager
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.requiredSize
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Switch
@@ -38,6 +47,7 @@ import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.schedulers.Schedulers
 import java.util.concurrent.TimeUnit
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.unit.Dp
 import com.tower0000.quicktune.ui.components.StringsField
 import com.tower0000.quicktune.ui.components.TuningsChangeBar
 
@@ -68,7 +78,7 @@ fun TunerScreen(viewModel: TunerViewModel) {
     val myFont = FontFamily(
         Font(resId = R.font.poppins_medium, weight = FontWeight.Normal)
     )
-
+    val context = LocalContext.current
     Scaffold(
 
         containerColor = GreyBackground,
@@ -93,26 +103,39 @@ fun TunerScreen(viewModel: TunerViewModel) {
             )
         },
         content = {
-
             Column(
                 modifier = Modifier
             ) {
                 TuningsChangeBar(padding = it, font = myFont)
-                Column(
-                    modifier = Modifier,
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                ) {
-                    TunerIndicate(
-                        state = state.value,
-//                        modifier = Modifier
-//                            .requiredSize(390.dp)
-                    )
-                }
+                TunerIndicate(
+                    state = state.value,
+                    modifier = Modifier
+                        .width(screenWidthInDp(context))
+                        .height(screenWidthInDp(context) / 2)
+                )
+                Spacer(modifier = Modifier.padding(15.dp))
+                StringsField(font = myFont)
             }
         }
 
     )
 
+}
+
+fun screenWidthInDp(context: Context): Dp {
+    val windowManager = context.getSystemService(Context.WINDOW_SERVICE) as WindowManager
+    val display: Display = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+        // For Android 11 (API level 30) and above
+        context.display!!
+    } else {
+        // For versions below Android 11
+        windowManager.defaultDisplay
+    }
+    val displayMetrics = DisplayMetrics()
+    display.getMetrics(displayMetrics)
+    val widthPixels = displayMetrics.widthPixels
+    val density = displayMetrics.density
+    return (widthPixels / density).dp
 }
 
 

@@ -24,8 +24,7 @@ import com.tower0000.quicktune.ui.theme.LightGrey
 @Composable
 fun TuningsChangeBar(padding: PaddingValues, font: FontFamily) {
     Column(
-        modifier = Modifier
-            .padding(padding)
+        modifier = Modifier.padding(padding)
     ) {
         Row(
             modifier = Modifier
