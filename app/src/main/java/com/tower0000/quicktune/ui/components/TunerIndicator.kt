@@ -133,7 +133,7 @@ fun TunerIndicate(
                     cX = center.x,
                     cY = size.height
                 )
-                pitchMarker(startOffset, endOffset, SolidColor(Color.DarkGray), 1.dp.toPx())
+                pitchMarker(startOffset, endOffset, SolidColor(Color.LightGray), 1.dp.toPx())
             }
         }
         pitchIndicator(pitchAngle = 180 - pitchDiffFixed * 2)

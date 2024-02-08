@@ -1,6 +1,7 @@
 package com.tower0000.quicktune.ui.components
 
 import androidx.compose.animation.animateColorAsState
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -9,11 +10,16 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.defaultMinSize
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.KeyboardArrowRight
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
@@ -25,9 +31,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.compositeOver
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.tower0000.quicktune.R
 import com.tower0000.quicktune.domain.entity.GuitarTuning
 import com.tower0000.quicktune.domain.entity.Note
 import com.tower0000.quicktune.ui.theme.DarkGrey
@@ -35,92 +45,63 @@ import com.tower0000.quicktune.ui.theme.GreyBackground
 import com.tower0000.quicktune.ui.theme.LightGrey
 
 @Composable
-fun StringsField(font: FontFamily) {
-    Row(
-        modifier = Modifier,
-        horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.Bottom
-
-    ) {
-
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .weight(1f),
-            horizontalAlignment = Alignment.End
-        ) {
-            StringTextField("1st", font)
-            Spacer(modifier = Modifier.padding(8.dp))
-            StringTextField("2nd", font)
-            Spacer(modifier = Modifier.padding(8.dp))
-            StringTextField("3rd", font)
-        }
-
-
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .weight(1f),
-            horizontalAlignment = Alignment.End
-        ) {
-            OvalTextField("E4", font)
-            Spacer(modifier = Modifier.padding(8.dp))
-            OvalTextField("B3", font)
-            Spacer(modifier = Modifier.padding(8.dp))
-            OvalTextField("G3", font)
-        }
-
-        Spacer(modifier = Modifier.padding(8.dp))
-
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .weight(1f),
-            horizontalAlignment = Alignment.Start
-
-        ) {
-            OvalTextField("D3", font)
-            Spacer(modifier = Modifier.padding(8.dp))
-            OvalTextField("A3", font)
-            Spacer(modifier = Modifier.padding(8.dp))
-            OvalTextField("E2", font)
-        }
-
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .weight(1f),
-            horizontalAlignment = Alignment.Start
-        ) {
-            StringTextField("4th", font)
-            Spacer(modifier = Modifier.padding(8.dp))
-            StringTextField("5th", font)
-            Spacer(modifier = Modifier.padding(8.dp))
-            StringTextField("6th", font)
-        }
-    }
-}
-
-@Composable
-fun OvalTextField(
-    text: String,
-    fontFamily: FontFamily,
+fun StringsField(
+    font: FontFamily,
+    tuning: GuitarTuning,
+    tunedStrings: List<Boolean>,
+    selectedString: Int?,
+    onSelect: (Int) -> Unit
 ) {
-    Box(
-        modifier = Modifier
-            .size(70.dp, 50.dp)
-            .background(
-                color = DarkGrey,
-                shape = MaterialTheme.shapes.small.copy(),
-            ),
-        contentAlignment = Alignment.Center,
-    ) {
-        Text(
-            text = text,
-            fontFamily = fontFamily,
-            fontSize = 21.sp,
-            color = Color.White
-        )
+    Row(
+        modifier = Modifier.padding(horizontal = 18.dp),
+        horizontalArrangement = Arrangement.SpaceBetween,
+
+        ) {
+
+
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .weight(1f),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Spacer(modifier = Modifier.padding(20.dp))
+            StringSelectionButton(0, tuning.firstString, tunedStrings[0], selectedString, onSelect, font)
+            Spacer(modifier = Modifier.padding(8.dp))
+            StringSelectionButton(1, tuning.secondString, tunedStrings[1], selectedString, onSelect, font)
+            Spacer(modifier = Modifier.padding(8.dp))
+            StringSelectionButton(2, tuning.thirdString, tunedStrings[2], selectedString, onSelect, font)
+            Spacer(modifier = Modifier.padding(8.dp))
+        }
+
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .weight(3f),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Image(
+                contentScale = ContentScale.FillBounds,
+                painter = painterResource(id = R.drawable.guitar_head_cropped),
+                contentDescription = "Change tuning"
+            )
+        }
+
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .weight(1f),
+            horizontalAlignment = Alignment.CenterHorizontally
+
+        ) {
+            Spacer(modifier = Modifier.padding(20.dp))
+            StringSelectionButton(3, tuning.fourthString, tunedStrings[3], selectedString, onSelect, font)
+            Spacer(modifier = Modifier.padding(8.dp))
+            StringSelectionButton(4, tuning.fifthString, tunedStrings[4], selectedString, onSelect, font)
+            Spacer(modifier = Modifier.padding(8.dp))
+            StringSelectionButton(5, tuning.sixthString, tunedStrings[5], selectedString, onSelect, font)
+            Spacer(modifier = Modifier.padding(8.dp))
+        }
     }
 }
 
@@ -130,20 +111,21 @@ private fun StringSelectionButton(
     index: Int,
     note: Note,
     tuned: Boolean,
-    selected: Boolean,
+    selected: Int?,
     onSelect: (Int) -> Unit,
+    fontFamily: FontFamily
 ) {
     // Animate content color by selected and tuned state.
     val contentColor by animateColorAsState(
         if (tuned) Color.Green
-        else if (selected) Color.Red
+        else if (selected == index) Color.Red
         else LightGrey,
         label = "String Button Content Color"
     )
 
     // Animate background color by selected state.
     val backgroundColor by animateColorAsState(
-        if (selected) {
+        if (selected == index) {
             contentColor.copy(alpha = 0.12f)
                 .compositeOver(Color.Red)
         } else DarkGrey,
@@ -152,7 +134,7 @@ private fun StringSelectionButton(
 
     // Selection Button
     OutlinedButton(
-        modifier = Modifier.defaultMinSize(72.dp, 48.dp),
+        modifier = Modifier.defaultMinSize(56.dp, 48.dp),
         colors = ButtonDefaults.outlinedButtonColors(
             containerColor = backgroundColor,
             contentColor = contentColor,
@@ -160,33 +142,8 @@ private fun StringSelectionButton(
         shape = RoundedCornerShape(100),
         onClick = remember(onSelect, index) { { onSelect(index) } }
     ) {
-        Text(note.name, modifier = Modifier.padding(4.dp))
-    }
-}
-
-
-
-
-
-@Composable
-fun StringTextField(
-    text: String,
-    fontFamily: FontFamily,
-) {
-    Box(
-        modifier = Modifier
-            .size(70.dp, 50.dp)
-            .background(
-                color = GreyBackground,
-                shape = MaterialTheme.shapes.medium.copy(),
-            ),
-        contentAlignment = Alignment.Center
-    ) {
-        Text(
-            text = text,
-            fontFamily = fontFamily,
-            fontSize = 16.sp,
-            color = Color.White
-        )
+        Text(note.name,fontFamily = fontFamily,
+            fontSize = 12.sp,
+            color = Color.White)
     }
 }

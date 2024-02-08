@@ -56,6 +56,7 @@ import com.tower0000.quicktune.ui.viewmodel.TunerIntent
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TunerScreen(viewModel: TunerViewModel) {
+
     val defaultViewState = TunerState(
         true,
         0.0f,
@@ -114,6 +115,9 @@ fun TunerScreen(viewModel: TunerViewModel) {
             )
         },
         content = {
+            val onSelectedString: (Int) -> Unit = { selectedInt ->
+
+            }
             Column(
                 modifier = Modifier
             ) {
@@ -124,8 +128,12 @@ fun TunerScreen(viewModel: TunerViewModel) {
                         .width(screenWidthInDp(context))
                         .height(screenWidthInDp(context) / 2)
                 )
-                Spacer(modifier = Modifier.padding(15.dp))
-                StringsField(font = myFont)
+                Spacer(modifier = Modifier.padding(10.dp))
+                StringsField(font = myFont,
+                    tuning = state.value.selectedTuning,
+                    tunedStrings = state.value.tunedStrings,
+                    selectedString = state.value.selectedString,
+                    onSelect = onSelectedString)
             }
         }
 

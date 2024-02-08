@@ -28,8 +28,7 @@ fun TuningsChangeBar(padding: PaddingValues, font: FontFamily) {
     ) {
         Row(
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = 16.dp),
+                .fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
 
