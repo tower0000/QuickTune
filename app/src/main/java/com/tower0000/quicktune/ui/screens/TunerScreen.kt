@@ -48,24 +48,35 @@ import io.reactivex.rxjava3.schedulers.Schedulers
 import java.util.concurrent.TimeUnit
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.Dp
+import com.tower0000.quicktune.domain.service.Tunings
 import com.tower0000.quicktune.ui.components.StringsField
 import com.tower0000.quicktune.ui.components.TuningsChangeBar
+import com.tower0000.quicktune.ui.viewmodel.TunerIntent
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TunerScreen(viewModel: TunerViewModel) {
-    val state = remember { mutableStateOf(TunerState(false, 0.0f, "", 0.0f)) }
+    val defaultViewState = TunerState(
+        true,
+        0.0f,
+        "--",
+        0.0f,
+        true,
+        List(6) { false },
+        null,
+        Tunings.STANDARD_TUNING
+    )
+
+    val state = remember {
+        mutableStateOf(defaultViewState)
+    }
 
     DisposableEffect(viewModel) {
         val disposable = viewModel.observeState()
             .subscribeOn(Schedulers.newThread())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe { newState ->
-                if (newState.currentPitch < 1f) {
-                    state.value = TunerState(true, 0.0f, "", 0.0f)
-                } else {
-                    state.value = newState
-                }
+                state.value = newState
             }
 
         onDispose {
@@ -74,7 +85,6 @@ fun TunerScreen(viewModel: TunerViewModel) {
     }
 
 
-    var isAutoMode by remember { mutableStateOf(true) }
     val myFont = FontFamily(
         Font(resId = R.font.poppins_medium, weight = FontWeight.Normal)
     )
@@ -94,9 +104,10 @@ fun TunerScreen(viewModel: TunerViewModel) {
                 ),
                 actions = {
                     Text("Auto  ", fontFamily = myFont, color = Color.White)
+                    val switchCheckedState = state.value.autoTuning
                     Switch(
-                        checked = isAutoMode,
-                        onCheckedChange = { isAutoMode = it },
+                        checked = state.value.autoTuning,
+                        onCheckedChange = { viewModel.processIntent(TunerIntent.ChangeAutoTuning(!switchCheckedState)) },
                         modifier = Modifier.padding(end = 12.dp)
                     )
                 }

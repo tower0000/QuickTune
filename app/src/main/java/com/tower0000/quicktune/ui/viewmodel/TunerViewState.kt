@@ -7,8 +7,8 @@ data class TunerState(
     val currentPitch: Float,
     val nearestNote: String,
     val pitchDiff: Float,
-//    val autoTuning: Boolean,
-//    val tunedStrings: List<Boolean>,
-//    val selectedString: Int?,
-//    val selectedTuning: GuitarTuning
+    val autoTuning: Boolean,
+    val tunedStrings: List<Boolean>,
+    val selectedString: Int?,
+    val selectedTuning: GuitarTuning
 )

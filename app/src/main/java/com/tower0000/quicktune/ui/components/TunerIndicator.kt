@@ -83,16 +83,6 @@ fun TunerIndicate(
             style = Stroke(width = 4.0.dp.toPx(), cap = StrokeCap.Round)
         )
 
-//        drawArc(
-//            color = Color.White,
-//            startAngle = 206f,
-//            sweepAngle = 128f,
-//            alpha = 0.2f,
-//            useCenter = true,
-//            size = circleSizeForArc,
-//            style = Stroke(width = 2.0.dp.toPx(), cap = StrokeCap.Round)
-//        )
-
         drawArc(
             color = Red,
             startAngle = 270f,

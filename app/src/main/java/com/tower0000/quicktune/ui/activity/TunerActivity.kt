@@ -29,7 +29,6 @@ import kotlinx.coroutines.flow.flowOf
 
 class TunerActivity : ComponentActivity() {
     private val viewModel by viewModels<TunerViewModel>()
-    private lateinit var stateSubscription: Disposable
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
