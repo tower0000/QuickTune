@@ -56,7 +56,7 @@ import com.tower0000.quicktune.ui.viewmodel.TunerIntent
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TunerScreen(viewModel: TunerViewModel) {
-
+    val tunings = Tunings()
     val defaultViewState = TunerState(
         true,
         0.0f,
@@ -65,7 +65,7 @@ fun TunerScreen(viewModel: TunerViewModel) {
         true,
         List(6) { false },
         null,
-        Tunings.STANDARD_TUNING
+        tunings.STANDARD_TUNING
     )
 
     val state = remember {
@@ -85,6 +85,10 @@ fun TunerScreen(viewModel: TunerViewModel) {
         }
     }
 
+    val onSelectedString: (Int) -> Unit = { stringIndex ->
+        viewModel.processIntent(TunerIntent.PickString(stringIndex))
+        viewModel.processIntent(TunerIntent.ChangeAutoTuning(false))
+    }
 
     val myFont = FontFamily(
         Font(resId = R.font.poppins_medium, weight = FontWeight.Normal)
@@ -108,16 +112,17 @@ fun TunerScreen(viewModel: TunerViewModel) {
                     val switchCheckedState = state.value.autoTuning
                     Switch(
                         checked = state.value.autoTuning,
-                        onCheckedChange = { viewModel.processIntent(TunerIntent.ChangeAutoTuning(!switchCheckedState)) },
+                        onCheckedChange = {
+                            viewModel.processIntent(TunerIntent.ChangeAutoTuning(!switchCheckedState))
+                            viewModel.processIntent(TunerIntent.PickString(null))},
+
                         modifier = Modifier.padding(end = 12.dp)
                     )
                 }
             )
         },
         content = {
-            val onSelectedString: (Int) -> Unit = { selectedInt ->
 
-            }
             Column(
                 modifier = Modifier
             ) {
@@ -129,10 +134,8 @@ fun TunerScreen(viewModel: TunerViewModel) {
                         .height(screenWidthInDp(context) / 2)
                 )
                 Spacer(modifier = Modifier.padding(10.dp))
-                StringsField(font = myFont,
-                    tuning = state.value.selectedTuning,
-                    tunedStrings = state.value.tunedStrings,
-                    selectedString = state.value.selectedString,
+                StringsField(state = state.value,
+                    fontFamily = myFont,
                     onSelect = onSelectedString)
             }
         }

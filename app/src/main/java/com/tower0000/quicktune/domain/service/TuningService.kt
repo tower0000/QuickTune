@@ -7,22 +7,14 @@ import kotlin.math.abs
 class TuningService {
 
     companion object {
-        fun processPitch(currentPitch: Float, guitarTuning: GuitarTuning, onResult: (Note, Float) -> Unit) {
-            val allNotes = listOf(
-                guitarTuning.firstString,
-                guitarTuning.secondString,
-                guitarTuning.thirdString,
-                guitarTuning.fourthString,
-                guitarTuning.fifthString,
-                guitarTuning.sixthString
-            )
+        fun processPitch(currentPitch: Float, guitarTuning: List<Note>, onResult: (Note, Float) -> Unit) {
 
             val nearestNote =
-                allNotes.minByOrNull { abs(it.hzValue - currentPitch) }
+                guitarTuning.minByOrNull { abs(it.hzValue - currentPitch) }
 
             // If pitchDiff <0 -> note is bellow tune. if pitchDiff >0 -> note is higher than needed
             val pitchDiff = (currentPitch - nearestNote!!.hzValue)
-
+            //val nearestNoteIndex = guitarTuning.indexOf(nearestNote)
             onResult(nearestNote, pitchDiff)
         }
     }

@@ -18,15 +18,15 @@ import io.reactivex.rxjava3.subjects.BehaviorSubject
 private const val SAMPLE_RATE = 44100
 private const val BUFFER_SIZE = 5376
 class TunerViewModel : ViewModel() {
-
+    private val tunings = Tunings()
     private var isTuning = false
     private var currentPitch = 0.0f
     private var nearestNote = ""
     private var pitchDiff = 0.0f
     private var autoTuning = false
-    private var tunedStrings = List(6) { false }
+    private var tunedStrings = MutableList(6) { false }
     private var selectedString: Int? = null
-    private var selectedTuning = Tunings.STANDARD_TUNING
+    private var selectedTuning = tunings.STANDARD_TUNING
 
     private val pitchAnalyzer = PitchAnalyzer()
 
@@ -39,7 +39,7 @@ class TunerViewModel : ViewModel() {
             is TunerIntent.StopTunerIntent -> stopTuner()
             is TunerIntent.ChangeAutoTuning -> autoTuning = intent.isAutoTuning
             is TunerIntent.ChangeTuning -> TODO()
-            is TunerIntent.PickString -> TODO()
+            is TunerIntent.PickString -> pickGuitarString(intent.guitarString)
         }
     }
 
@@ -64,9 +64,13 @@ class TunerViewModel : ViewModel() {
             pitchAnalyzer.addPitch(result.pitch)
         if (pitchAnalyzer.checkLastFive()) {
             currentPitch = pitchAnalyzer.getGuitarPitch()
-            TuningService.processPitch(currentPitch, Tunings.STANDARD_TUNING) { note, diff ->
+            TuningService.processPitch(currentPitch, selectedTuning) { note, diff ->
                 nearestNote = note.name
                 pitchDiff = diff
+                if (pitchDiff >-0.1f && pitchDiff <0.1f){
+                    val index = selectedTuning.indexOf(note)
+                    tunedStrings[index] = true
+                }
             }
             updateState()
         } else {
@@ -104,6 +108,12 @@ class TunerViewModel : ViewModel() {
         isTuning = false
         updateState()
     }
+
+    private fun pickGuitarString(index: Int?){
+        selectedString = index
+        updateState()
+    }
+
 
     fun observeState(): Flowable<TunerState> {
         return stateSubject.toFlowable(BackpressureStrategy.DROP)

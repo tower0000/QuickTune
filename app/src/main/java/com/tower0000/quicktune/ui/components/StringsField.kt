@@ -41,17 +41,21 @@ import com.tower0000.quicktune.R
 import com.tower0000.quicktune.domain.entity.GuitarTuning
 import com.tower0000.quicktune.domain.entity.Note
 import com.tower0000.quicktune.ui.theme.DarkGrey
+import com.tower0000.quicktune.ui.theme.Green
 import com.tower0000.quicktune.ui.theme.GreyBackground
 import com.tower0000.quicktune.ui.theme.LightGrey
+import com.tower0000.quicktune.ui.theme.SelectedStringGrey
+import com.tower0000.quicktune.ui.viewmodel.TunerState
 
 @Composable
 fun StringsField(
-    font: FontFamily,
-    tuning: GuitarTuning,
-    tunedStrings: List<Boolean>,
-    selectedString: Int?,
+    state: TunerState,
+    fontFamily: FontFamily,
     onSelect: (Int) -> Unit
 ) {
+    val tuning = state.selectedTuning
+    val tunedStrings = state.tunedStrings
+    val selectedString = state.selectedString
     Row(
         modifier = Modifier.padding(horizontal = 18.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
@@ -66,12 +70,14 @@ fun StringsField(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Spacer(modifier = Modifier.padding(20.dp))
-            StringSelectionButton(0, tuning.firstString, tunedStrings[0], selectedString, onSelect, font)
+
+            StringSelectionButton(2, tuning[2], tunedStrings[2], selectedString, onSelect, fontFamily)
             Spacer(modifier = Modifier.padding(8.dp))
-            StringSelectionButton(1, tuning.secondString, tunedStrings[1], selectedString, onSelect, font)
+            StringSelectionButton(1, tuning[1], tunedStrings[1], selectedString, onSelect, fontFamily)
             Spacer(modifier = Modifier.padding(8.dp))
-            StringSelectionButton(2, tuning.thirdString, tunedStrings[2], selectedString, onSelect, font)
+            StringSelectionButton(0, tuning[0], tunedStrings[0], selectedString, onSelect, fontFamily)
             Spacer(modifier = Modifier.padding(8.dp))
+
         }
 
         Column(
@@ -95,11 +101,11 @@ fun StringsField(
 
         ) {
             Spacer(modifier = Modifier.padding(20.dp))
-            StringSelectionButton(3, tuning.fourthString, tunedStrings[3], selectedString, onSelect, font)
+            StringSelectionButton(3, tuning[3], tunedStrings[3], selectedString, onSelect, fontFamily)
             Spacer(modifier = Modifier.padding(8.dp))
-            StringSelectionButton(4, tuning.fifthString, tunedStrings[4], selectedString, onSelect, font)
+            StringSelectionButton(4, tuning[4], tunedStrings[4], selectedString, onSelect, fontFamily)
             Spacer(modifier = Modifier.padding(8.dp))
-            StringSelectionButton(5, tuning.sixthString, tunedStrings[5], selectedString, onSelect, font)
+            StringSelectionButton(5, tuning[5], tunedStrings[5], selectedString, onSelect, fontFamily)
             Spacer(modifier = Modifier.padding(8.dp))
         }
     }
@@ -117,9 +123,7 @@ private fun StringSelectionButton(
 ) {
     // Animate content color by selected and tuned state.
     val contentColor by animateColorAsState(
-        if (tuned) Color.Green
-        else if (selected == index) Color.Red
-        else LightGrey,
+        Color.White,
         label = "String Button Content Color"
     )
 
@@ -127,8 +131,9 @@ private fun StringSelectionButton(
     val backgroundColor by animateColorAsState(
         if (selected == index) {
             contentColor.copy(alpha = 0.12f)
-                .compositeOver(Color.Red)
-        } else DarkGrey,
+                .compositeOver(SelectedStringGrey)
+        } else if (tuned) Green
+        else DarkGrey,
         label = "String Button Background Color"
     )
 

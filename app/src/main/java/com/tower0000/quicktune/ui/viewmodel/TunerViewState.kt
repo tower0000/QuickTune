@@ -1,6 +1,5 @@
 package com.tower0000.quicktune.ui.viewmodel
-
-import com.tower0000.quicktune.domain.entity.GuitarTuning
+import com.tower0000.quicktune.domain.entity.Note
 
 data class TunerState(
     val isTuning: Boolean,
@@ -10,5 +9,5 @@ data class TunerState(
     val autoTuning: Boolean,
     val tunedStrings: List<Boolean>,
     val selectedString: Int?,
-    val selectedTuning: GuitarTuning
+    val selectedTuning: List<Note>
 )

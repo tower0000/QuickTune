@@ -7,5 +7,5 @@ sealed class TunerIntent {
     data object StopTunerIntent : TunerIntent()
     data class ChangeAutoTuning(val isAutoTuning: Boolean) : TunerIntent()
     data class ChangeTuning(val tuning: GuitarTuning) : TunerIntent()
-    data class PickString(val guitarString: Int) : TunerIntent()
+    data class PickString(val guitarString: Int?) : TunerIntent()
 }
