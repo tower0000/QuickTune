@@ -60,14 +60,12 @@ class TunerViewModel : ViewModel() {
         PitchDetectionHandler { result, _ -> processPitch(result) }
 
     private fun processPitch(result: PitchDetectionResult) {
-        if (result.pitch > 0)
-            pitchAnalyzer.addPitch(result.pitch)
-        if (pitchAnalyzer.checkLastFive()) {
-            currentPitch = pitchAnalyzer.getGuitarPitch()
+        if (pitchAnalyzer.analyzePitch(result.pitch) > 0) {
+            currentPitch = result.pitch
             TuningService.processPitch(currentPitch, selectedTuning.tuning) { note, diff ->
                 nearestNote = note.name
                 pitchDiff = diff
-                if (pitchDiff >-0.1f && pitchDiff <0.1f){
+                if (pitchDiff >-1f && pitchDiff <1f){
                     val index = selectedTuning.tuning.indexOf(note)
                     tunedStrings[index] = true
                 }
