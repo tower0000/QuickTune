@@ -68,7 +68,7 @@ dependencies {
     debugImplementation("androidx.compose.ui:ui-tooling")
     debugImplementation("androidx.compose.ui:ui-test-manifest")
 
-    // Local (Pitch detection)
+    //Local (Pitch detection)
     implementation (files("libs/TarsosDSP-Android-latest.jar"))
 
     //Rx Java

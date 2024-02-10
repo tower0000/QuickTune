@@ -1,5 +1,4 @@
 package com.tower0000.quicktune.ui.viewmodel
-
 import com.tower0000.quicktune.domain.entity.GuitarTuning
 
 sealed class TunerIntent {

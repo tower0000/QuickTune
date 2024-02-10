@@ -1,6 +1,5 @@
 package com.tower0000.quicktune.ui.viewmodel
 
-import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModel
 import be.tarsos.dsp.AudioDispatcher
 import be.tarsos.dsp.io.android.AudioDispatcherFactory
@@ -8,6 +7,7 @@ import be.tarsos.dsp.pitch.PitchDetectionHandler
 import be.tarsos.dsp.pitch.PitchDetectionResult
 import be.tarsos.dsp.pitch.PitchProcessor
 import com.tower0000.quicktune.domain.entity.GuitarTuning
+import com.tower0000.quicktune.domain.entity.Note
 import com.tower0000.quicktune.domain.service.PitchAnalyzer
 import com.tower0000.quicktune.domain.service.TuningService
 import com.tower0000.quicktune.domain.service.Tunings
@@ -38,7 +38,7 @@ class TunerViewModel : ViewModel() {
             is TunerIntent.StartTunerIntent -> startTuner()
             is TunerIntent.StopTunerIntent -> stopTuner()
             is TunerIntent.ChangeAutoTuning -> autoTuning = intent.isAutoTuning
-            is TunerIntent.ChangeTuning -> TODO()
+            is TunerIntent.ChangeTuning -> changeGuitarTuning(intent.tuning)
             is TunerIntent.PickString -> pickGuitarString(intent.guitarString)
         }
     }
@@ -64,11 +64,11 @@ class TunerViewModel : ViewModel() {
             pitchAnalyzer.addPitch(result.pitch)
         if (pitchAnalyzer.checkLastFive()) {
             currentPitch = pitchAnalyzer.getGuitarPitch()
-            TuningService.processPitch(currentPitch, selectedTuning) { note, diff ->
+            TuningService.processPitch(currentPitch, selectedTuning.tuning) { note, diff ->
                 nearestNote = note.name
                 pitchDiff = diff
                 if (pitchDiff >-0.1f && pitchDiff <0.1f){
-                    val index = selectedTuning.indexOf(note)
+                    val index = selectedTuning.tuning.indexOf(note)
                     tunedStrings[index] = true
                 }
             }
@@ -114,6 +114,13 @@ class TunerViewModel : ViewModel() {
         updateState()
     }
 
+    private fun changeGuitarTuning(tuning: GuitarTuning) {
+        selectedTuning = tuning
+        tunedStrings.forEachIndexed { index, _ ->
+            tunedStrings[index] = false
+        }
+        updateState()
+    }
 
     fun observeState(): Flowable<TunerState> {
         return stateSubject.toFlowable(BackpressureStrategy.DROP)

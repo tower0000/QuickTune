@@ -1,6 +1,5 @@
 package com.tower0000.quicktune.domain.service
 
-import com.tower0000.quicktune.domain.entity.GuitarTuning
 import com.tower0000.quicktune.domain.entity.Note
 import kotlin.math.abs
 

@@ -5,19 +5,10 @@ import android.os.Build
 import android.util.DisplayMetrics
 import android.view.Display
 import android.view.WindowManager
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.WindowInsetsSides
-import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.requiredSize
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
@@ -27,11 +18,8 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.Font
@@ -45,9 +33,9 @@ import com.tower0000.quicktune.ui.viewmodel.TunerState
 import com.tower0000.quicktune.ui.viewmodel.TunerViewModel
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.schedulers.Schedulers
-import java.util.concurrent.TimeUnit
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.Dp
+import com.tower0000.quicktune.domain.entity.GuitarTuning
 import com.tower0000.quicktune.domain.service.Tunings
 import com.tower0000.quicktune.ui.components.StringsField
 import com.tower0000.quicktune.ui.components.TuningsChangeBar
@@ -90,6 +78,10 @@ fun TunerScreen(viewModel: TunerViewModel) {
         viewModel.processIntent(TunerIntent.ChangeAutoTuning(false))
     }
 
+    val onSelectedTuning: (GuitarTuning) -> Unit = { tuning ->
+        viewModel.processIntent(TunerIntent.ChangeTuning(tuning))
+    }
+
     val myFont = FontFamily(
         Font(resId = R.font.poppins_medium, weight = FontWeight.Normal)
     )
@@ -126,7 +118,11 @@ fun TunerScreen(viewModel: TunerViewModel) {
             Column(
                 modifier = Modifier
             ) {
-                TuningsChangeBar(padding = it, font = myFont)
+                TuningsChangeBar(padding = it,
+                    fontFamily = myFont,
+                    tunings = tunings.ALL_TUNINGS,
+                    selectedItem = state.value.selectedTuning,
+                    onTuningSelected = onSelectedTuning)
                 TunerIndicate(
                     state = state.value,
                     modifier = Modifier

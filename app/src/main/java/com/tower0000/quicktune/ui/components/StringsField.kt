@@ -2,26 +2,15 @@ package com.tower0000.quicktune.ui.components
 
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.defaultMinSize
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.KeyboardArrowRight
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Icon
-import androidx.compose.material3.LocalContentColor
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -34,16 +23,12 @@ import androidx.compose.ui.graphics.compositeOver
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.tower0000.quicktune.R
-import com.tower0000.quicktune.domain.entity.GuitarTuning
 import com.tower0000.quicktune.domain.entity.Note
 import com.tower0000.quicktune.ui.theme.DarkGrey
 import com.tower0000.quicktune.ui.theme.Green
-import com.tower0000.quicktune.ui.theme.GreyBackground
-import com.tower0000.quicktune.ui.theme.LightGrey
 import com.tower0000.quicktune.ui.theme.SelectedStringGrey
 import com.tower0000.quicktune.ui.viewmodel.TunerState
 
@@ -71,11 +56,11 @@ fun StringsField(
         ) {
             Spacer(modifier = Modifier.padding(20.dp))
 
-            StringSelectionButton(2, tuning[2], tunedStrings[2], selectedString, onSelect, fontFamily)
+            StringSelectionButton(2, tuning.tuning[2], tunedStrings[2], selectedString, onSelect, fontFamily)
             Spacer(modifier = Modifier.padding(8.dp))
-            StringSelectionButton(1, tuning[1], tunedStrings[1], selectedString, onSelect, fontFamily)
+            StringSelectionButton(1, tuning.tuning[1], tunedStrings[1], selectedString, onSelect, fontFamily)
             Spacer(modifier = Modifier.padding(8.dp))
-            StringSelectionButton(0, tuning[0], tunedStrings[0], selectedString, onSelect, fontFamily)
+            StringSelectionButton(0, tuning.tuning[0], tunedStrings[0], selectedString, onSelect, fontFamily)
             Spacer(modifier = Modifier.padding(8.dp))
 
         }
@@ -101,11 +86,11 @@ fun StringsField(
 
         ) {
             Spacer(modifier = Modifier.padding(20.dp))
-            StringSelectionButton(3, tuning[3], tunedStrings[3], selectedString, onSelect, fontFamily)
+            StringSelectionButton(3, tuning.tuning[3], tunedStrings[3], selectedString, onSelect, fontFamily)
             Spacer(modifier = Modifier.padding(8.dp))
-            StringSelectionButton(4, tuning[4], tunedStrings[4], selectedString, onSelect, fontFamily)
+            StringSelectionButton(4, tuning.tuning[4], tunedStrings[4], selectedString, onSelect, fontFamily)
             Spacer(modifier = Modifier.padding(8.dp))
-            StringSelectionButton(5, tuning[5], tunedStrings[5], selectedString, onSelect, fontFamily)
+            StringSelectionButton(5, tuning.tuning[5], tunedStrings[5], selectedString, onSelect, fontFamily)
             Spacer(modifier = Modifier.padding(8.dp))
         }
     }
