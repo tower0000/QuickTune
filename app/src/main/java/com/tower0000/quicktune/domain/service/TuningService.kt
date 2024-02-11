@@ -13,8 +13,12 @@ class TuningService {
 
             // If pitchDiff <0 -> note is bellow tune. if pitchDiff >0 -> note is higher than needed
             val pitchDiff = (currentPitch - nearestNote!!.hzValue)
-            //val nearestNoteIndex = guitarTuning.indexOf(nearestNote)
             onResult(nearestNote, pitchDiff)
+        }
+
+        fun processPitchFromCurrentString(currentPitch: Float, note: Note, onResult: (Float) -> Unit) {
+            val pitchDiff = (currentPitch - note.hzValue)
+            onResult(pitchDiff)
         }
     }
 }

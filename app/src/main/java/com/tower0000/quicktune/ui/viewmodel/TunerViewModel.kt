@@ -7,7 +7,6 @@ import be.tarsos.dsp.pitch.PitchDetectionHandler
 import be.tarsos.dsp.pitch.PitchDetectionResult
 import be.tarsos.dsp.pitch.PitchProcessor
 import com.tower0000.quicktune.domain.entity.GuitarTuning
-import com.tower0000.quicktune.domain.entity.Note
 import com.tower0000.quicktune.domain.service.PitchAnalyzer
 import com.tower0000.quicktune.domain.service.TuningService
 import com.tower0000.quicktune.domain.service.Tunings
@@ -17,13 +16,14 @@ import io.reactivex.rxjava3.subjects.BehaviorSubject
 
 private const val SAMPLE_RATE = 44100
 private const val BUFFER_SIZE = 5376
+
 class TunerViewModel : ViewModel() {
     private val tunings = Tunings()
     private var isTuning = false
     private var currentPitch = 0.0f
     private var nearestNote = ""
     private var pitchDiff = 0.0f
-    private var autoTuning = false
+    private var autoTuning = true
     private var tunedStrings = MutableList(6) { false }
     private var selectedString: Int? = null
     private var selectedTuning = tunings.STANDARD_TUNING
@@ -35,8 +35,8 @@ class TunerViewModel : ViewModel() {
 
     fun processIntent(intent: TunerIntent) {
         when (intent) {
-            is TunerIntent.StartTunerIntent -> startTuner()
-            is TunerIntent.StopTunerIntent -> stopTuner()
+            is TunerIntent.StartTuner -> startTuner()
+            is TunerIntent.StopTuner -> stopTuner()
             is TunerIntent.ChangeAutoTuning -> autoTuning = intent.isAutoTuning
             is TunerIntent.ChangeTuning -> changeGuitarTuning(intent.tuning)
             is TunerIntent.PickString -> pickGuitarString(intent.guitarString)
@@ -45,14 +45,15 @@ class TunerViewModel : ViewModel() {
 
     private fun updateState() {
         val newState = TunerState(
-            isTuning =  isTuning,
+            isTuning = isTuning,
             currentPitch = currentPitch,
             nearestNote = nearestNote,
             pitchDiff = pitchDiff,
             autoTuning = autoTuning,
             tunedStrings = tunedStrings,
             selectedString = selectedString,
-            selectedTuning = selectedTuning)
+            selectedTuning = selectedTuning
+        )
         stateSubject.onNext(newState)
     }
 
@@ -60,22 +61,8 @@ class TunerViewModel : ViewModel() {
         PitchDetectionHandler { result, _ -> processPitch(result) }
 
     private fun processPitch(result: PitchDetectionResult) {
-        if (pitchAnalyzer.analyzePitch(result.pitch) > 0) {
-            currentPitch = result.pitch
-            TuningService.processPitch(currentPitch, selectedTuning.tuning) { note, diff ->
-                nearestNote = note.name
-                pitchDiff = diff
-                if (pitchDiff >-1f && pitchDiff <1f){
-                    val index = selectedTuning.tuning.indexOf(note)
-                    tunedStrings[index] = true
-                }
-            }
-            updateState()
-        } else {
-            nearestNote = ""
-            pitchDiff = 0.0f
-            updateState()
-        }
+        if (!autoTuning && selectedString != null) detectPitchCurrentString(result)
+        else if (autoTuning) detectPitchAuto(result)
     }
 
     private val dispatcher: AudioDispatcher =
@@ -96,7 +83,6 @@ class TunerViewModel : ViewModel() {
     private fun startTuner() {
         Thread(dispatcher, "Audio Dispatcher").start()
         isTuning = true
-        autoTuning = true
         updateState()
     }
 
@@ -107,7 +93,7 @@ class TunerViewModel : ViewModel() {
         updateState()
     }
 
-    private fun pickGuitarString(index: Int?){
+    private fun pickGuitarString(index: Int?) {
         selectedString = index
         updateState()
     }
@@ -117,6 +103,41 @@ class TunerViewModel : ViewModel() {
         tunedStrings.forEachIndexed { index, _ ->
             tunedStrings[index] = false
         }
+        updateState()
+    }
+
+    private fun detectPitchAuto(result: PitchDetectionResult) {
+        if (pitchAnalyzer.analyzePitch(result.pitch) > 0) {
+            currentPitch = result.pitch
+            TuningService.processPitch(currentPitch, selectedTuning.tuning) { note, diff ->
+                nearestNote = note.name
+                pitchDiff = diff
+                if (pitchDiff > -1f && pitchDiff < 1f) {
+                    val index = selectedTuning.tuning.indexOf(note)
+                    tunedStrings[index] = true
+                }
+            }
+        } else {
+            nearestNote = ""
+            pitchDiff = 0.0f
+        }
+        updateState()
+    }
+
+    private fun detectPitchCurrentString(result: PitchDetectionResult) {
+        val index = selectedString!!
+        if (pitchAnalyzer.analyzePitch(result.pitch) > 0) {
+            TuningService.processPitchFromCurrentString(
+                result.pitch,
+                selectedTuning.tuning[selectedString!!]
+            ) { diff ->
+                pitchDiff = diff
+                if (pitchDiff > -1f && pitchDiff < 1f) {
+                    tunedStrings[index] = true
+                }
+            }
+        } else pitchDiff = 0.0f
+        nearestNote = selectedTuning.tuning[index].name
         updateState()
     }
 
