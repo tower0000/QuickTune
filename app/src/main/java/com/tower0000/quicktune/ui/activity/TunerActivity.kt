@@ -8,6 +8,8 @@ import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Surface
+import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
+import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.ui.Modifier
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -19,6 +21,7 @@ import com.tower0000.quicktune.ui.viewmodel.TunerViewModel
 
 class TunerActivity : ComponentActivity() {
     private val viewModel by viewModels<TunerViewModel>()
+    @OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -27,12 +30,12 @@ class TunerActivity : ComponentActivity() {
 
         setContent {
             QuickTuneTheme {
-                // A surface container using the 'background' color from the theme
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = GreyBackground
                 ) {
-                    TunerScreen(viewModel)
+                    val windowSizeClass = calculateWindowSizeClass(this)
+                    TunerScreen(viewModel, windowSizeClass)
                 }
             }
         }

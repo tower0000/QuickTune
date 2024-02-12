@@ -5,9 +5,16 @@ import android.os.Build
 import android.util.DisplayMetrics
 import android.view.Display
 import android.view.WindowManager
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -16,10 +23,14 @@ import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.windowsizeclass.WindowHeightSizeClass
+import androidx.compose.material3.windowsizeclass.WindowSizeClass
+import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.Font
@@ -34,31 +45,29 @@ import com.tower0000.quicktune.ui.viewmodel.TunerViewModel
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.schedulers.Schedulers
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import com.tower0000.quicktune.domain.entity.GuitarTuning
 import com.tower0000.quicktune.domain.service.Tunings
 import com.tower0000.quicktune.ui.components.StringsField
 import com.tower0000.quicktune.ui.components.TuningsChangeBar
 import com.tower0000.quicktune.ui.viewmodel.TunerIntent
+import androidx.compose.ui.unit.sp
+import com.tower0000.quicktune.ui.theme.LightGrey
+import com.tower0000.quicktune.ui.util.ScreenMode
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TunerScreen(viewModel: TunerViewModel) {
+fun TunerScreen(viewModel: TunerViewModel, windowSizeClass: WindowSizeClass) {
+    val context = LocalContext.current
+    val fontFamily = FontFamily(Font(resId = R.font.poppins_medium, weight = FontWeight.Normal))
     val tunings = Tunings()
     val defaultViewState = TunerState(
-        true,
-        0.0f,
-        "--",
-        0.0f,
-        true,
-        List(6) { false },
-        null,
-        tunings.STANDARD_TUNING
+        true, 0.0f, "--", 0.0f, true,
+        List(6) { false }, null, tunings.STANDARD_TUNING
     )
-
-    val state = remember {
-        mutableStateOf(defaultViewState)
-    }
+    val state = remember { mutableStateOf(defaultViewState) }
 
     DisposableEffect(viewModel) {
         val disposable = viewModel.observeState()
@@ -81,63 +90,87 @@ fun TunerScreen(viewModel: TunerViewModel) {
     val onSelectedTuning: (GuitarTuning) -> Unit = { tuning ->
         viewModel.processIntent(TunerIntent.ChangeTuning(tuning))
     }
+    val screenMode: ScreenMode =
+        if ((windowSizeClass.heightSizeClass == WindowHeightSizeClass.Medium)
+        ) ScreenMode.PORTRAIT
+        else if (windowSizeClass.widthSizeClass == WindowWidthSizeClass.Expanded ||
+            windowSizeClass.widthSizeClass == WindowWidthSizeClass.Medium
+        ) ScreenMode.LANDSCAPE
+        else ScreenMode.COMPACT
 
-    val myFont = FontFamily(
-        Font(resId = R.font.poppins_medium, weight = FontWeight.Normal)
-    )
-    val context = LocalContext.current
     Scaffold(
-
         containerColor = GreyBackground,
         topBar = {
             TopAppBar(
-
                 modifier = Modifier
                     .padding(2.dp),
-                title = { Text("QuickTune", fontFamily = myFont) },
+                title = { Text("QuickTune", fontFamily = fontFamily) },
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = GreyBackground,
                     titleContentColor = Color.White
                 ),
                 actions = {
-                    Text("Auto  ", fontFamily = myFont, color = Color.White)
+                    Text("Auto  ", fontFamily = fontFamily, color = Color.White)
                     val switchCheckedState = state.value.autoTuning
                     Switch(
                         checked = state.value.autoTuning,
                         onCheckedChange = {
                             viewModel.processIntent(TunerIntent.ChangeAutoTuning(!switchCheckedState))
-                            viewModel.processIntent(TunerIntent.PickString(null))},
+                            viewModel.processIntent(TunerIntent.PickString(null))
+                        },
 
                         modifier = Modifier.padding(end = 12.dp)
                     )
                 }
             )
+
         },
         content = {
+            if (screenMode == ScreenMode.PORTRAIT) {
+                Column(
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    TuningsChangeBar(
+                        padding = it,
+                        fontFamily = fontFamily,
+                        tunings = tunings.ALL_TUNINGS,
+                        selectedItem = state.value.selectedTuning,
+                        onTuningSelected = onSelectedTuning
+                    )
+                    Spacer(modifier = Modifier.weight(1f))
+                    TunerIndicate(
+                        state = state.value,
+                        modifier = Modifier
+                            .width(screenWidthInDp(context)/1.1f)
+                            .height(screenWidthInDp(context) / 2.2f)
+                            .align(Alignment.CenterHorizontally)
+                    )
+                    Text(
+                        modifier = Modifier
+                            .padding(
+                                top = screenHeightInDp(context) / 40,
+                                bottom = screenHeightInDp(context) / 60,
+                            )
+                            .fillMaxWidth(),
+                        textAlign = TextAlign.Center,
+                        text = state.value.nearestNote,
+                        style = TextStyle(
+                            color = LightGrey,
+                            fontSize = 50.sp
+                        )
+                    )
 
-            Column(
-                modifier = Modifier
-            ) {
-                TuningsChangeBar(padding = it,
-                    fontFamily = myFont,
-                    tunings = tunings.ALL_TUNINGS,
-                    selectedItem = state.value.selectedTuning,
-                    onTuningSelected = onSelectedTuning)
-                TunerIndicate(
-                    state = state.value,
-                    modifier = Modifier
-                        .width(screenWidthInDp(context))
-                        .height(screenWidthInDp(context) / 2)
-                )
-                Spacer(modifier = Modifier.padding(10.dp))
-                StringsField(state = state.value,
-                    fontFamily = myFont,
-                    onSelect = onSelectedString)
+                    StringsField(
+                        state = state.value,
+                        onSelect = onSelectedString,
+                        modifier = Modifier
+                            .height(screenWidthInDp(context)/1.3f)
+                    )
+                }
             }
         }
 
     )
-
 }
 
 fun screenWidthInDp(context: Context): Dp {
@@ -154,6 +187,22 @@ fun screenWidthInDp(context: Context): Dp {
     val widthPixels = displayMetrics.widthPixels
     val density = displayMetrics.density
     return (widthPixels / density).dp
+}
+
+fun screenHeightInDp(context: Context): Dp {
+    val windowManager = context.getSystemService(Context.WINDOW_SERVICE) as WindowManager
+    val display: Display = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+        // For Android 11 (API level 30) and above
+        context.display!!
+    } else {
+        // For versions below Android 11
+        windowManager.defaultDisplay
+    }
+    val displayMetrics = DisplayMetrics()
+    display.getMetrics(displayMetrics)
+    val heightPixels = displayMetrics.heightPixels
+    val density = displayMetrics.density
+    return (heightPixels / density).dp
 }
 
 

@@ -4,7 +4,7 @@ import com.tower0000.quicktune.domain.entity.GuitarTuning
 
 class Tunings {
     private val n = Notes()
-    val STANDARD_TUNING: GuitarTuning = GuitarTuning("Standard 6-string", listOf(
+    val STANDARD_TUNING: GuitarTuning = GuitarTuning("Standard", listOf(
         n.e4, n.b3, n.g3, n.d3, n.a2, n.e2))
 
     val DROP_D: GuitarTuning = GuitarTuning("Drop D", listOf(

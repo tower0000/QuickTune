@@ -118,7 +118,7 @@ class TunerViewModel : ViewModel() {
                 }
             }
         } else {
-            nearestNote = ""
+            nearestNote = "--"
             pitchDiff = 0.0f
         }
         updateState()

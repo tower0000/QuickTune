@@ -49,7 +49,7 @@ fun TunerIndicate(
     val pitchDiffText = String.format("%.0f", state.pitchDiff)
     val textColor = LightGrey
 
-    Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
+    Box(modifier = Modifier, contentAlignment = Alignment.Center) {
         Text(
             text = if (state.pitchDiff > 0) "+$pitchDiffText"
             else if (state.pitchDiff > -correctPitchLimit && state.pitchDiff < correctPitchLimit) ""
@@ -140,18 +140,18 @@ fun TunerIndicate(
 
         val textSize = size.height.toSp() / 3
 
-        drawText(
-            topLeft = Offset(
-                x = size.width / 2 - textSize.toPx() / 1.7f,
-                y = center.y - textSize.toPx() / 1.5f
-            ),
-            textMeasurer = textMeasurer,
-            text = state.nearestNote,
-            style = TextStyle(
-                color = Color.White,
-                fontSize = textSize,
-            )
-        )
+//        drawText(
+//            topLeft = Offset(
+//                x = size.width / 2 - textSize.toPx() / 1.7f,
+//                y = center.y - textSize.toPx() / 1.5f
+//            ),
+//            textMeasurer = textMeasurer,
+//            text = state.pitchDiff.toString(),
+//            style = TextStyle(
+//                color = Color.White,
+//                fontSize = textSize,
+//            )
+//        )
     })
 
 }

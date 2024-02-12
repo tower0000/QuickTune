@@ -62,18 +62,18 @@ fun TuningsChangeBar(padding: PaddingValues,
             )
 
             val textStyle = TextStyle(
-                fontSize = 14.sp,
+                fontSize = 16.sp,
                 color = Color.White
             )
 
             val keyboardController = LocalSoftwareKeyboardController.current
 
             TextField(
-                value = selectedText,
+                value = "Tuning:  $selectedText",
                 modifier = Modifier
                     .menuAnchor()
-                    .height(50.dp)
-                    .width(180.dp)
+                    .height(60.dp)
+                    .width(210.dp)
                     .onFocusChanged { hasFocus ->
                         if (hasFocus.hasFocus) {
                             keyboardController?.hide()
