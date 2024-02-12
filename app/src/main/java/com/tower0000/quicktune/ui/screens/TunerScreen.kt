@@ -50,6 +50,7 @@ import com.tower0000.quicktune.ui.components.StringsField
 import com.tower0000.quicktune.ui.components.TuningsChangeBar
 import com.tower0000.quicktune.ui.viewmodel.TunerIntent
 import androidx.compose.ui.unit.sp
+import androidx.constraintlayout.compose.ConstraintLayout
 import com.tower0000.quicktune.ui.theme.LightGrey
 import com.tower0000.quicktune.ui.util.ScreenMode
 
@@ -90,9 +91,7 @@ fun TunerScreen(viewModel: TunerViewModel, windowSizeClass: WindowSizeClass) {
 
 
     val screenMode: ScreenMode =
-        if (windowSizeClass.widthSizeClass == WindowWidthSizeClass.Compact &&
-            screenHeight > 600
-        ) ScreenMode.PORTRAIT
+        if (screenHeight > 600) ScreenMode.PORTRAIT
         else if (windowSizeClass.widthSizeClass == WindowWidthSizeClass.Expanded ||
             windowSizeClass.widthSizeClass == WindowWidthSizeClass.Medium
         ) ScreenMode.LANDSCAPE
@@ -146,6 +145,7 @@ fun TunerScreen(viewModel: TunerViewModel, windowSizeClass: WindowSizeClass) {
                                 .width(screenWidth.dp / 1.1f)
                                 .height(screenWidth.dp / 2.2f)
                                 .align(Alignment.CenterHorizontally)
+                                .padding(top = 10.dp)
                         )
 
                         Text(
@@ -245,7 +245,99 @@ fun TunerScreen(viewModel: TunerViewModel, windowSizeClass: WindowSizeClass) {
             }
         }
 
-        else -> {}
+        else -> {
+            Column(
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                val paddings = PaddingValues(top = 1.dp)
+                Spacer(modifier = Modifier.padding(bottom = 15.dp))
+                Row(
+                    modifier = Modifier.height(55.dp),
+                    horizontalArrangement = Arrangement.Center,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    TuningsChangeBar(
+                        padding = paddings,
+                        fontFamily = fontFamily,
+                        tunings = tunings.ALL_TUNINGS,
+                        selectedItem = state.value.selectedTuning,
+                        onTuningSelected = onSelectedTuning
+                    )
+                    Spacer(modifier = Modifier.weight(1f))
+
+                    Text(
+                        "Auto  ",
+                        fontFamily = fontFamily,
+                        color = Color.White,
+                    )
+                    val switchCheckedState = state.value.autoTuning
+                    Switch(
+                        checked = state.value.autoTuning,
+                        onCheckedChange = {
+                            viewModel.processIntent(TunerIntent.ChangeAutoTuning(!switchCheckedState))
+                            viewModel.processIntent(TunerIntent.PickString(null))
+                        },
+
+                        modifier = Modifier.padding(end = 15.dp)
+                    )
+
+                }
+
+                ConstraintLayout(
+                    modifier = Modifier.fillMaxSize()
+                ) {
+                    val (indicator, text, strings, spacer) = createRefs()
+                    Spacer(
+                        modifier = Modifier.constrainAs(spacer) {
+                            top.linkTo(parent.top)
+                            start.linkTo(parent.start)
+                        }
+                            .height(screenHeight.dp / 9f))
+                    TunerIndicate(
+                        state = state.value,
+                        modifier = Modifier
+                            .constrainAs(indicator) {
+                                top.linkTo(spacer.bottom)
+                                start.linkTo(parent.start)
+                                end.linkTo(strings.start)
+                            }
+                            .width(screenWidth.dp / 2.5f)
+                            .height(screenWidth.dp / 5f)
+                    )
+
+                    Text(
+                        modifier = Modifier
+                            .constrainAs(text) {
+                                top.linkTo(indicator.bottom)
+                                start.linkTo(indicator.start)
+                                end.linkTo(indicator.end)
+                            }
+                            .padding(
+                                top = 20.dp,
+                            ),
+                        text = state.value.nearestNote,
+                        style = TextStyle(
+                            color = LightGrey,
+                            fontSize = 50.sp
+                        )
+                    )
+
+                    StringsField(
+                        state = state.value,
+                        onSelect = onSelectedString,
+                        modifier = Modifier
+                            .constrainAs(strings) {
+                                bottom.linkTo(parent.bottom)
+                                start.linkTo(indicator.end)
+                                end.linkTo(parent.end)
+                            }
+                            .height(screenHeight.dp / 1.3f)
+                            .width(screenWidth.dp / 2f)
+                    )
+                }
+
+
+            }
+        }
     }
 }
-

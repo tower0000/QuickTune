@@ -132,11 +132,11 @@ private fun StringSelectionButton(
     )
 
     val backgroundColor by animateColorAsState(
-        if (selected == index) {
+        if (tuned) Green
+        else if (selected == index) {
             contentColor.copy(alpha = 0.12f)
                 .compositeOver(SelectedStringGrey)
-        } else if (tuned) Green
-        else DarkGrey,
+        } else DarkGrey,
         label = "String Button Background Color"
     )
 

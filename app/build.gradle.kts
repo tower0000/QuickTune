@@ -81,5 +81,7 @@ dependencies {
     implementation("androidx.compose.material3:material3-adaptive:1.0.0-alpha06")
     implementation("androidx.compose.material3:material3-adaptive-navigation-suite:1.0.0-alpha03")
 
+    //Constraint layout
+    implementation ("androidx.constraintlayout:constraintlayout-compose:1.0.1")
 }
 
