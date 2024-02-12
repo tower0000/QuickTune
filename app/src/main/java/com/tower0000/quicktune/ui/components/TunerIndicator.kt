@@ -3,6 +3,7 @@ package com.tower0000.quicktune.ui.components
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
@@ -46,7 +47,7 @@ fun TunerIndicate(
     val pitchMaxValue = 30f
     val correctPitchLimit = 0.1
     val pitchDiffFontSize = 25.sp
-    val pitchDiffText = String.format("%.0f", state.pitchDiff)
+    val pitchDiffText = String.format("%.1f", state.pitchDiff)
     val textColor = LightGrey
 
     Box(modifier = Modifier, contentAlignment = Alignment.Center) {

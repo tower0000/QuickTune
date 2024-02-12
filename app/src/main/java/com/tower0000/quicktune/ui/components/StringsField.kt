@@ -29,14 +29,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.compositeOver
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.tower0000.quicktune.R
 import com.tower0000.quicktune.domain.entity.Note
-import com.tower0000.quicktune.ui.screens.screenHeightInDp
-import com.tower0000.quicktune.ui.screens.screenWidthInDp
 import com.tower0000.quicktune.ui.theme.DarkGrey
 import com.tower0000.quicktune.ui.theme.Green
 import com.tower0000.quicktune.ui.theme.LightGrey
@@ -88,7 +84,7 @@ fun StringsField(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Image(
-                contentScale = ContentScale.Fit,
+                contentScale = ContentScale.FillBounds,
                 painter = painterResource(id = R.drawable.guitar_head_cropped),
                 contentDescription = "Change tuning"
             )
