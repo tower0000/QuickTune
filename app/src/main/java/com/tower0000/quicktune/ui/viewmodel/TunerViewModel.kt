@@ -1,5 +1,7 @@
 package com.tower0000.quicktune.ui.viewmodel
 
+import android.media.AudioFormat
+import android.media.AudioRecord
 import androidx.lifecycle.ViewModel
 import be.tarsos.dsp.AudioDispatcher
 import be.tarsos.dsp.io.android.AudioDispatcherFactory
@@ -15,9 +17,15 @@ import io.reactivex.rxjava3.core.Flowable
 import io.reactivex.rxjava3.subjects.BehaviorSubject
 
 private const val SAMPLE_RATE = 44100
-private const val BUFFER_SIZE = 5376
+private val BUFFER_SIZE = AudioRecord.getMinBufferSize(
+    SAMPLE_RATE,
+    AudioFormat.CHANNEL_IN_MONO,
+    AudioFormat.ENCODING_PCM_16BIT
+)
 
 class TunerViewModel : ViewModel() {
+    private lateinit var dispatcher: AudioDispatcher
+    private lateinit var pitchProcessor: PitchProcessor
     private val tunings = Tunings()
     private var isTuning = false
     private var currentPitch = 0.0f
@@ -31,7 +39,6 @@ class TunerViewModel : ViewModel() {
     private val pitchAnalyzer = PitchAnalyzer()
 
     private val stateSubject: BehaviorSubject<TunerState> = BehaviorSubject.create()
-
 
     fun processIntent(intent: TunerIntent) {
         when (intent) {
@@ -65,25 +72,20 @@ class TunerViewModel : ViewModel() {
         else if (autoTuning) detectPitchAuto(result)
     }
 
-    private val dispatcher: AudioDispatcher =
-        AudioDispatcherFactory.fromDefaultMicrophone(SAMPLE_RATE, BUFFER_SIZE, 0)
-
-    private val pitchProcessor = PitchProcessor(
-        PitchProcessor.PitchEstimationAlgorithm.YIN,
-        SAMPLE_RATE.toFloat(),
-        BUFFER_SIZE,
-        pitchHandler
-    )
-
-    init {
-        dispatcher.addAudioProcessor(pitchProcessor)
-    }
-
-
     private fun startTuner() {
-        Thread(dispatcher, "Audio Dispatcher").start()
-        isTuning = true
-        updateState()
+        if (!isTuning) {
+            pitchProcessor = PitchProcessor(
+                PitchProcessor.PitchEstimationAlgorithm.YIN,
+                SAMPLE_RATE.toFloat(),
+                BUFFER_SIZE,
+                pitchHandler
+            )
+            dispatcher = AudioDispatcherFactory.fromDefaultMicrophone(SAMPLE_RATE, BUFFER_SIZE, 0)
+            dispatcher.addAudioProcessor(pitchProcessor)
+            Thread(dispatcher, "Audio Dispatcher").start()
+            isTuning = true
+            updateState()
+        }
     }
 
     private fun stopTuner() {

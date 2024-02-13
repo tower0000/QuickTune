@@ -20,6 +20,7 @@ import com.tower0000.quicktune.ui.screens.TunerScreen
 import com.tower0000.quicktune.ui.theme.GreyBackground
 import com.tower0000.quicktune.ui.theme.QuickTuneTheme
 import com.tower0000.quicktune.ui.util.PermissionHandler
+import com.tower0000.quicktune.ui.viewmodel.TunerIntent
 import com.tower0000.quicktune.ui.viewmodel.TunerViewModel
 
 class TunerActivity : ComponentActivity() {
@@ -32,6 +33,7 @@ class TunerActivity : ComponentActivity() {
     private val launcher =
         this.registerForActivityResult(ActivityResultContracts.RequestPermission()) {
             if (it) navController.navigate(navTunerScreen)
+            viewModel.processIntent(TunerIntent.StartTuner)
         }
 
     @OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
@@ -53,9 +55,10 @@ class TunerActivity : ComponentActivity() {
                         composable(navPermissionScreen) { PermissionScreen() }
                         composable(navTunerScreen) { TunerScreen(viewModel, windowSizeClass) }
                     }
-                    if (!ph.check()) launcher.launch(permission)
                 }
             }
         }
+        if (!ph.check()) launcher.launch(permission)
+        else viewModel.processIntent(TunerIntent.StartTuner)
     }
 }
