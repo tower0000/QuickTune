@@ -1,6 +1,5 @@
 package com.tower0000.quicktune.ui.viewmodel
 
-import android.Manifest
 import androidx.lifecycle.ViewModel
 import be.tarsos.dsp.AudioDispatcher
 import be.tarsos.dsp.io.android.AudioDispatcherFactory
@@ -11,7 +10,6 @@ import com.tower0000.quicktune.domain.entity.GuitarTuning
 import com.tower0000.quicktune.domain.service.PitchAnalyzer
 import com.tower0000.quicktune.domain.service.TuningService
 import com.tower0000.quicktune.domain.service.Tunings
-import com.tower0000.quicktune.ui.util.PermissionHandler
 import io.reactivex.rxjava3.core.BackpressureStrategy
 import io.reactivex.rxjava3.core.Flowable
 import io.reactivex.rxjava3.subjects.BehaviorSubject
