@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">QuickTune</string>
+    <string name="tv_auto">"Auto:  "</string>
+    <string name="tv_topbar_name">QuickTune</string>
+    <string name="tv_pitch_diff">"Pitch diff:  "</string>
+    <string name="tv_permission_title">To continue using the application,\nwe need your permission\nto process audio.\nCheck QuickTune permissions\nin Settings</string>
 </resources>

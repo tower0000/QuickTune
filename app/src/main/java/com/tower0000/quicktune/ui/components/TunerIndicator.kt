@@ -1,14 +1,7 @@
 package com.tower0000.quicktune.ui.components
 
 import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.text.rememberTextMeasurer
@@ -22,11 +15,8 @@ import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.text.TextMeasurer
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.drawText
-import androidx.compose.ui.unit.TextUnit
-import androidx.compose.ui.unit.TextUnitType
 import com.tower0000.quicktune.ui.theme.DarkGrey
 import com.tower0000.quicktune.ui.theme.Green
-import com.tower0000.quicktune.ui.theme.LightGrey
 import com.tower0000.quicktune.ui.theme.Red
 import com.tower0000.quicktune.ui.viewmodel.TunerState
 import kotlin.math.cos
@@ -45,23 +35,7 @@ fun TunerIndicate(
 ) {
     val textMeasurer = rememberTextMeasurer()
     val pitchMaxValue = 30f
-    val correctPitchLimit = 0.1
-    val pitchDiffFontSize = 25.sp
-    val pitchDiffText = String.format("%.1f", state.pitchDiff)
-    val textColor = LightGrey
 
-    Box(modifier = Modifier, contentAlignment = Alignment.Center) {
-        Text(
-            text = if (state.pitchDiff > 0) "+$pitchDiffText"
-            else if (state.pitchDiff > -correctPitchLimit && state.pitchDiff < correctPitchLimit) ""
-            else pitchDiffText,
-            style = TextStyle(
-                color = textColor,
-                fontSize = pitchDiffFontSize,
-            )
-        )
-    }
-    Spacer(modifier = Modifier.padding(4.dp))
     Canvas(modifier = modifier, onDraw = {
         val circleSizeForArc = Size(size.width, size.width)
         val pitchDiffFixed =
@@ -138,21 +112,6 @@ fun TunerIndicate(
             }
         }
         pitchIndicator(pitchAngle = 180 - pitchDiffFixed * 2)
-
-        val textSize = size.height.toSp() / 3
-
-//        drawText(
-//            topLeft = Offset(
-//                x = size.width / 2 - textSize.toPx() / 1.7f,
-//                y = center.y - textSize.toPx() / 1.5f
-//            ),
-//            textMeasurer = textMeasurer,
-//            text = state.pitchDiff.toString(),
-//            style = TextStyle(
-//                color = Color.White,
-//                fontSize = textSize,
-//            )
-//        )
     })
 
 }

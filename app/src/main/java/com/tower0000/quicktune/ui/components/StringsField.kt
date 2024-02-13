@@ -2,21 +2,13 @@ package com.tower0000.quicktune.ui.components
 
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
-import androidx.compose.material3.windowsizeclass.WindowHeightSizeClass
-import androidx.compose.material3.windowsizeclass.WindowSizeClass
-import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
@@ -35,7 +27,6 @@ import com.tower0000.quicktune.R
 import com.tower0000.quicktune.domain.entity.Note
 import com.tower0000.quicktune.ui.theme.DarkGrey
 import com.tower0000.quicktune.ui.theme.Green
-import com.tower0000.quicktune.ui.theme.LightGrey
 import com.tower0000.quicktune.ui.theme.SelectedStringGrey
 import com.tower0000.quicktune.ui.viewmodel.TunerState
 

@@ -5,11 +5,9 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -18,7 +16,6 @@ import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.material3.windowsizeclass.WindowHeightSizeClass
 import androidx.compose.material3.windowsizeclass.WindowSizeClass
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
@@ -40,10 +37,9 @@ import com.tower0000.quicktune.ui.viewmodel.TunerState
 import com.tower0000.quicktune.ui.viewmodel.TunerViewModel
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.schedulers.Schedulers
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.Dp
 import com.tower0000.quicktune.domain.entity.GuitarTuning
 import com.tower0000.quicktune.domain.service.Tunings
 import com.tower0000.quicktune.ui.components.StringsField
@@ -51,6 +47,7 @@ import com.tower0000.quicktune.ui.components.TuningsChangeBar
 import com.tower0000.quicktune.ui.viewmodel.TunerIntent
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
+import com.tower0000.quicktune.ui.components.PitchDiffIndicator
 import com.tower0000.quicktune.ui.theme.LightGrey
 import com.tower0000.quicktune.ui.util.ScreenMode
 
@@ -89,9 +86,9 @@ fun TunerScreen(viewModel: TunerViewModel, windowSizeClass: WindowSizeClass) {
         viewModel.processIntent(TunerIntent.ChangeTuning(tuning))
     }
 
-
+    val maxCompactScreenHeight = 600
     val screenMode: ScreenMode =
-        if (screenHeight > 600) ScreenMode.PORTRAIT
+        if (screenHeight > maxCompactScreenHeight) ScreenMode.PORTRAIT
         else if (windowSizeClass.widthSizeClass == WindowWidthSizeClass.Expanded ||
             windowSizeClass.widthSizeClass == WindowWidthSizeClass.Medium
         ) ScreenMode.LANDSCAPE
@@ -105,13 +102,22 @@ fun TunerScreen(viewModel: TunerViewModel, windowSizeClass: WindowSizeClass) {
                     TopAppBar(
                         modifier = Modifier
                             .padding(2.dp),
-                        title = { Text("QuickTune", fontFamily = fontFamily) },
+                        title = {
+                            Text(
+                                stringResource(R.string.tv_topbar_name),
+                                fontFamily = fontFamily
+                            )
+                        },
                         colors = TopAppBarDefaults.topAppBarColors(
                             containerColor = GreyBackground,
                             titleContentColor = Color.White
                         ),
                         actions = {
-                            Text("Auto  ", fontFamily = fontFamily, color = Color.White)
+                            Text(
+                                stringResource(R.string.tv_auto),
+                                fontFamily = fontFamily,
+                                color = Color.White
+                            )
                             val switchCheckedState = state.value.autoTuning
                             Switch(
                                 checked = state.value.autoTuning,
@@ -139,13 +145,18 @@ fun TunerScreen(viewModel: TunerViewModel, windowSizeClass: WindowSizeClass) {
                         )
 
                         Spacer(modifier = Modifier.weight(1f))
+                        PitchDiffIndicator(
+                            state = state.value,
+                            fontFamily = fontFamily,
+                            modifier = Modifier
+                                .width(screenWidth.dp)
+                        )
                         TunerIndicate(
                             state = state.value,
                             modifier = Modifier
                                 .width(screenWidth.dp / 1.1f)
                                 .height(screenWidth.dp / 2.2f)
                                 .align(Alignment.CenterHorizontally)
-                                .padding(top = 10.dp)
                         )
 
                         Text(
@@ -197,7 +208,7 @@ fun TunerScreen(viewModel: TunerViewModel, windowSizeClass: WindowSizeClass) {
                     Spacer(modifier = Modifier.weight(1f))
 
                     Text(
-                        "Auto  ",
+                        stringResource(R.string.tv_auto),
                         fontFamily = fontFamily,
                         color = Color.White,
                     )
@@ -213,7 +224,13 @@ fun TunerScreen(viewModel: TunerViewModel, windowSizeClass: WindowSizeClass) {
                     )
 
                 }
-
+                Spacer(modifier = Modifier.weight(1f))
+                PitchDiffIndicator(
+                    state = state.value,
+                    fontFamily = fontFamily,
+                    modifier = Modifier
+                        .width(screenWidth.dp)
+                )
                 TunerIndicate(
                     state = state.value,
                     modifier = Modifier
@@ -235,7 +252,6 @@ fun TunerScreen(viewModel: TunerViewModel, windowSizeClass: WindowSizeClass) {
                         fontSize = 50.sp
                     )
                 )
-                Spacer(modifier = Modifier.weight(1f))
                 StringsField(
                     state = state.value,
                     onSelect = onSelectedString,
@@ -245,6 +261,7 @@ fun TunerScreen(viewModel: TunerViewModel, windowSizeClass: WindowSizeClass) {
             }
         }
 
+        // else stays for Landscape screen mode
         else -> {
             Column(
                 modifier = Modifier.fillMaxWidth()
@@ -264,9 +281,20 @@ fun TunerScreen(viewModel: TunerViewModel, windowSizeClass: WindowSizeClass) {
                         onTuningSelected = onSelectedTuning
                     )
                     Spacer(modifier = Modifier.weight(1f))
-
                     Text(
-                        "Auto  ",
+                        stringResource(R.string.tv_pitch_diff),
+                        fontFamily = fontFamily,
+                        color = Color.White,
+                        fontSize = 20.sp
+                    )
+                    PitchDiffIndicator(
+                        state = state.value,
+                        fontFamily = fontFamily,
+                        modifier = Modifier
+                    )
+                    Spacer(modifier = Modifier.weight(1f))
+                    Text(
+                        stringResource(R.string.tv_auto),
                         fontFamily = fontFamily,
                         color = Color.White,
                     )
@@ -288,10 +316,11 @@ fun TunerScreen(viewModel: TunerViewModel, windowSizeClass: WindowSizeClass) {
                 ) {
                     val (indicator, text, strings, spacer) = createRefs()
                     Spacer(
-                        modifier = Modifier.constrainAs(spacer) {
-                            top.linkTo(parent.top)
-                            start.linkTo(parent.start)
-                        }
+                        modifier = Modifier
+                            .constrainAs(spacer) {
+                                top.linkTo(parent.top)
+                                start.linkTo(parent.start)
+                            }
                             .height(screenHeight.dp / 9f))
                     TunerIndicate(
                         state = state.value,
